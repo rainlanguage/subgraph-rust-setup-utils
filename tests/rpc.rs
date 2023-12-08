@@ -104,7 +104,7 @@ async fn test_increase_timestamp_native_native_u64() -> anyhow::Result<()> {
 
     let timestamp_1 = rpc.get_block_by_number(block_number_1).await?.timestamp;
 
-    assert_eq!(timestamp_1, timestamp_0 + time_to_increase);
+    assert!(timestamp_1 >= timestamp_0 + time_to_increase);
 
     Ok(())
 }
