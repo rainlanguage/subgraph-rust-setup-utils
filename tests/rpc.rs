@@ -1,7 +1,7 @@
 use serial_test::serial;
 use subgraph_rust_setup_utils::rpc::RPC;
 
-// #[test]
+#[test]
 fn test_rpc_default_creation() {
     let rpc = RPC::default();
 
@@ -13,7 +13,7 @@ fn test_rpc_default_creation() {
 }
 
 #[tokio::main]
-// #[test]
+#[test]
 #[serial]
 async fn test_mine() -> anyhow::Result<()> {
     let rpc = RPC::default();
@@ -31,7 +31,7 @@ async fn test_mine() -> anyhow::Result<()> {
 }
 
 #[tokio::main]
-// #[test]
+#[test]
 #[serial]
 async fn test_get_block_by_number() -> anyhow::Result<()> {
     let rpc = RPC::default();
@@ -59,7 +59,7 @@ async fn test_get_block_by_number() -> anyhow::Result<()> {
 }
 
 #[tokio::main]
-// #[test]
+#[test]
 #[serial]
 async fn test_get_block_by_hash() -> anyhow::Result<()> {
     let rpc = RPC::default();
@@ -88,7 +88,7 @@ async fn test_get_block_by_hash() -> anyhow::Result<()> {
 }
 
 #[tokio::main]
-// #[test]
+#[test]
 #[serial]
 async fn test_increase_timestamp_native_native_u64() -> anyhow::Result<()> {
     let rpc = RPC::default();
@@ -110,7 +110,7 @@ async fn test_increase_timestamp_native_native_u64() -> anyhow::Result<()> {
 }
 
 #[tokio::main]
-#[test]
+// #[test]
 #[serial]
 async fn test_get_block_by_tx_hash() -> anyhow::Result<()> {
     todo!("get wallet not implemented to send a valid transaction");
