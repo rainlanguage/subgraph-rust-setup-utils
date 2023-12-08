@@ -1,5 +1,5 @@
 use ethers::providers::{Http, Provider};
-use ethers::types::{Block, H256, U64};
+use ethers::types::{Block, TransactionReceipt, TxHash, H256, U64};
 use reqwest::Client;
 use std::str::FromStr;
 
@@ -88,11 +88,13 @@ impl RPC {
             "jsonrpc": "2.0",
             "id": 1,
             "method": "eth_getBlockByNumber",
-            "params": [block_number, false],
+            "params": [block_number, true],
         });
 
         let response = self.send_request(json_rpc_request).await?;
+        // println!("resp: {:#?}", response);
         let block: Block<H256> = serde_json::from_value(response)?;
+        println!("block: {:#?}", block);
 
         Ok(block)
     }
@@ -110,6 +112,21 @@ impl RPC {
         let block: Block<H256> = serde_json::from_value(response)?;
 
         Ok(block)
+    }
+
+    pub async fn get_block_by_tx_hash(&self, tx_hash: TxHash) -> anyhow::Result<Block<H256>> {
+        let json_rpc_request = serde_json::json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "eth_getTransactionReceipt",
+            "params": [tx_hash],
+        });
+
+        let response = self.send_request(json_rpc_request).await?;
+        let receipt: TransactionReceipt = serde_json::from_value(response)?;
+
+        self.get_block_by_number(receipt.block_number.unwrap())
+            .await
     }
 
     /// Try to kump forward in time by the given amount of time in seconds and mine the block to reflect the change
