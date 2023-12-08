@@ -4,6 +4,7 @@ use reqwest::Client;
 use std::str::FromStr;
 
 /// RPC for interactions with a rpc url with their methods in an easy way
+#[derive(Clone)]
 pub struct RPC {
     url: String,
     provider: Provider<Http>,
