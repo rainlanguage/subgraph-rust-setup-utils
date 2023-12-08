@@ -92,9 +92,7 @@ impl RPC {
         });
 
         let response = self.send_request(json_rpc_request).await?;
-        // println!("resp: {:#?}", response);
         let block: Block<H256> = serde_json::from_value(response)?;
-        println!("block: {:#?}", block);
 
         Ok(block)
     }
