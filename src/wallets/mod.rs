@@ -27,6 +27,13 @@ impl From<Wallet<SigningKey>> for WalletInput {
     }
 }
 
+impl Default for WalletInput {
+    /// The default value it will be assumed to be a numeric 0 as index
+    fn default() -> Self {
+        WalletInput::Index(0)
+    }
+}
+
 #[derive(Clone)]
 pub struct WalletHandler {
     wallet_builder: MnemonicBuilder<English>,
