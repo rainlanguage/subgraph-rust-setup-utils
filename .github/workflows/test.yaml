@@ -1,0 +1,26 @@
+name: Subgraph setup utils tests CI
+on: [push]
+
+jobs:
+  tests:
+    name: Tests
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Start docker container
+        run: docker-compose -f docker/docker-compose.yaml up --build -d
+
+     - name: Run tests
+        run: cargo test
+
+      - name: Stop docker container
+        run: docker-compose -f docker/docker-compose.yaml down
