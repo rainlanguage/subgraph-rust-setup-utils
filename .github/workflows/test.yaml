@@ -16,6 +16,9 @@ jobs:
       - name: Start docker container
         run: docker-compose -f docker/docker-compose.yaml up --build -d
 
+      - name: Build
+        run: cargo build
+
       - name: Run tests
         run: cargo test
 
