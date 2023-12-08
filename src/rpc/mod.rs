@@ -74,7 +74,6 @@ impl RPC {
         let block_number = match self.send_request(json_rpc_request).await {
             Ok(data) => {
                 let value_data = data.as_str().unwrap().to_string();
-
                 U64::from_str(&value_data)?
             }
             Err(err) => return Err(err),
@@ -83,12 +82,28 @@ impl RPC {
         Ok(block_number)
     }
 
+    /// Use a block number to obtain the block data
     pub async fn get_block_by_number(&self, block_number: U64) -> anyhow::Result<Block<H256>> {
         let json_rpc_request = serde_json::json!({
             "jsonrpc": "2.0",
             "id": 1,
             "method": "eth_getBlockByNumber",
             "params": [block_number, false],
+        });
+
+        let response = self.send_request(json_rpc_request).await?;
+        let block: Block<H256> = serde_json::from_value(response)?;
+
+        Ok(block)
+    }
+
+    /// Use a block hash to obtain the block data
+    pub async fn get_block_by_hash(&self, block_hash: H256) -> anyhow::Result<Block<H256>> {
+        let json_rpc_request = serde_json::json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "eth_getBlockByHash",
+            "params": [block_hash, false],
         });
 
         let response = self.send_request(json_rpc_request).await?;
