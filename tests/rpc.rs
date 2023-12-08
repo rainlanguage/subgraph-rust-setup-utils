@@ -1,5 +1,5 @@
 use serial_test::serial;
-use subgraph_rust_setup_utils::rpc::RPC;
+use subgraph_rust_setup_utils::RPC;
 
 #[test]
 fn test_rpc_default_creation() {

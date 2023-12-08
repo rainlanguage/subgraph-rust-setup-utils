@@ -1,6 +1,6 @@
 use ethers::providers::{Http, Provider};
 use ethers::signers::Signer;
-use subgraph_rust_setup_utils::wallets::WalletHandler;
+use subgraph_rust_setup_utils::WalletHandler;
 
 #[test]
 fn test_get_wallet() -> anyhow::Result<()> {
