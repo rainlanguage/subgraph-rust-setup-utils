@@ -2,7 +2,6 @@ use subgraph_rust_setup_utils::rpc::RPC;
 
 #[test]
 fn test_rpc_default_creation() {
-    //b
     let rpc = RPC::default();
 
     assert_eq!(rpc.get_url(), "http://localhost:8545/");
@@ -12,5 +11,20 @@ fn test_rpc_default_creation() {
     );
 }
 
+#[tokio::main]
 #[test]
-fn test_a() {}
+async fn test_mine() -> anyhow::Result<()> {
+    // Default RPC
+    let rpc = RPC::default();
+
+    let before_block = rpc.get_block_number().await?;
+
+    // Mine a block
+    rpc.mine_block().await?;
+
+    let after_block = rpc.get_block_number().await?;
+
+    assert_eq!(after_block, before_block + 1, "block not mined");
+
+    Ok(())
+}
