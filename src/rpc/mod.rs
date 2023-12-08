@@ -1,10 +1,12 @@
 use ethers::providers::{Http, Provider};
+/// RPC for interactions with a rpc url with their methods in an easy way
 pub struct RPC {
     url: String,
     provider: Provider<Http>,
 }
 
 impl Default for RPC {
+    /// Create a default RPC using as rpc url a local node at `http://localhost:8545/` to send the requests
     fn default() -> Self {
         let default_url = "http://localhost:8545/";
 
@@ -16,6 +18,7 @@ impl Default for RPC {
 }
 
 impl RPC {
+    /// Create a RPC using the `url` to send the requests
     pub fn new(url: &str) -> Self {
         RPC {
             url: String::from(url),
@@ -23,6 +26,7 @@ impl RPC {
         }
     }
 
+    /// Create a RPC using an existing `provider`
     pub fn from_provider(provider: Provider<Http>) -> Self {
         RPC {
             url: provider.url().to_string(),
