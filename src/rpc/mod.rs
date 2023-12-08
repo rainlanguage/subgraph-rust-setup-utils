@@ -1,5 +1,5 @@
 use ethers::providers::{Http, Provider};
-use ethers::types::U64;
+use ethers::types::{Block, H256, U64};
 use reqwest::Client;
 use std::str::FromStr;
 
@@ -81,6 +81,20 @@ impl RPC {
         };
 
         Ok(block_number)
+    }
+
+    pub async fn get_block_by_number(&self, block_number: U64) -> anyhow::Result<Block<H256>> {
+        let json_rpc_request = serde_json::json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "eth_getBlockByNumber",
+            "params": [block_number, false],
+        });
+
+        let response = self.send_request(json_rpc_request).await?;
+        let block: Block<H256> = serde_json::from_value(response)?;
+
+        Ok(block)
     }
 
     async fn send_request(
