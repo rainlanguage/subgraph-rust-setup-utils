@@ -9,6 +9,7 @@ use crate::rpc::RPC;
 use ethers::providers::{Http, Provider};
 use std::sync::Arc;
 
+#[derive(Clone, Debug)]
 pub enum WalletInput {
     Index(u32),
     Wallet(Wallet<SigningKey>),
@@ -26,6 +27,7 @@ impl From<Wallet<SigningKey>> for WalletInput {
     }
 }
 
+#[derive(Clone)]
 pub struct WalletHandler {
     wallet_builder: MnemonicBuilder<English>,
     provider: Provider<Http>,
