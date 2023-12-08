@@ -1,5 +1,5 @@
 use ethers::providers::{Http, Provider};
-use ethers::types::U64;
+use ethers::types::{Block, TransactionReceipt, TxHash, H256, U64};
 use reqwest::Client;
 use std::str::FromStr;
 
@@ -74,13 +74,77 @@ impl RPC {
         let block_number = match self.send_request(json_rpc_request).await {
             Ok(data) => {
                 let value_data = data.as_str().unwrap().to_string();
-
                 U64::from_str(&value_data)?
             }
             Err(err) => return Err(err),
         };
 
         Ok(block_number)
+    }
+
+    /// Use a block number to obtain the block data
+    pub async fn get_block_by_number(&self, block_number: U64) -> anyhow::Result<Block<H256>> {
+        let json_rpc_request = serde_json::json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "eth_getBlockByNumber",
+            "params": [block_number, true],
+        });
+
+        let response = self.send_request(json_rpc_request).await?;
+        let block: Block<H256> = serde_json::from_value(response)?;
+
+        Ok(block)
+    }
+
+    /// Use a block hash to obtain the block data
+    pub async fn get_block_by_hash(&self, block_hash: H256) -> anyhow::Result<Block<H256>> {
+        let json_rpc_request = serde_json::json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "eth_getBlockByHash",
+            "params": [block_hash, false],
+        });
+
+        let response = self.send_request(json_rpc_request).await?;
+        let block: Block<H256> = serde_json::from_value(response)?;
+
+        Ok(block)
+    }
+
+    pub async fn get_block_by_tx_hash(&self, tx_hash: TxHash) -> anyhow::Result<Block<H256>> {
+        let json_rpc_request = serde_json::json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "eth_getTransactionReceipt",
+            "params": [tx_hash],
+        });
+
+        let response = self.send_request(json_rpc_request).await?;
+        let receipt: TransactionReceipt = serde_json::from_value(response)?;
+
+        self.get_block_by_number(receipt.block_number.unwrap())
+            .await
+    }
+
+    /// Try to kump forward in time by the given amount of time in seconds and mine the block to reflect the change
+    pub async fn increase_block_time<T>(&self, time_to_increase: T) -> anyhow::Result<()>
+    where
+        T: Into<u64> + Copy,
+    {
+        let u64_value: u64 = time_to_increase.into();
+
+        let json_rpc_request = serde_json::json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "evm_increaseTime",
+            "params": [u64_value],
+        });
+
+        self.send_request(json_rpc_request).await?;
+
+        // Mine a new block that have the new timestamp
+        self.mine_block().await
     }
 
     async fn send_request(
