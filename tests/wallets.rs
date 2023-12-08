@@ -1,7 +1,7 @@
+use ethers::core::k256::ecdsa::SigningKey;
 use ethers::providers::{Http, Provider};
-use ethers::signers::Signer;
+use ethers::signers::{Signer, Wallet};
 use subgraph_rust_setup_utils::WalletHandler;
-
 #[test]
 fn test_get_wallet() -> anyhow::Result<()> {
     // Wallets using junk mnemonic
@@ -43,9 +43,9 @@ async fn test_get_client_with_index() -> anyhow::Result<()> {
     let wallet_19 = wallets.get_wallet(19)?;
 
     let client_0 = wallets.get_client(0).await?;
-    let client_1 = wallets.get_client(1).await?;
+    let client_1 = wallets.get_client(&1).await?;
     let client_18 = wallets.get_client(18).await?;
-    let client_19 = wallets.get_client(19).await?;
+    let client_19 = wallets.get_client(&19).await?;
 
     assert_eq!(wallet_0.address(), client_0.address());
     assert_eq!(wallet_1.address(), client_1.address());
@@ -66,14 +66,32 @@ async fn test_get_client_with_wallet() -> anyhow::Result<()> {
     let wallet_19 = wallets.get_wallet(19)?;
 
     let client_0 = wallets.get_client(wallet_0.clone()).await?;
-    let client_1 = wallets.get_client(wallet_1.clone()).await?;
+    let client_1 = wallets.get_client(&wallet_1).await?;
     let client_18 = wallets.get_client(wallet_18.clone()).await?;
-    let client_19 = wallets.get_client(wallet_19.clone()).await?;
+    let client_19 = wallets.get_client(&wallet_19).await?;
 
     assert_eq!(wallet_0.address(), client_0.address());
     assert_eq!(wallet_1.address(), client_1.address());
     assert_eq!(wallet_18.address(), client_18.address());
     assert_eq!(wallet_19.address(), client_19.address());
+
+    Ok(())
+}
+
+#[tokio::main]
+#[test]
+async fn test_get_client_with_option_wallet() -> anyhow::Result<()> {
+    let wallets = WalletHandler::default();
+
+    let wallet_none: Option<Wallet<SigningKey>> = None;
+    let wallet_0 = wallets.get_wallet(0)?;
+    let wallet_9 = wallets.get_wallet(9)?;
+
+    let client_with_none_wallet = wallets.get_client(wallet_none).await?;
+    let client_with_some_wallet = wallets.get_client(&wallet_9).await?;
+
+    assert_eq!(wallet_0.address(), client_with_none_wallet.address());
+    assert_eq!(wallet_9.address(), client_with_some_wallet.address());
 
     Ok(())
 }
