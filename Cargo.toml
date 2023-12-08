@@ -10,3 +10,9 @@ name = "subgraph_rust_setup_utils"
 path = "src/lib.rs"
 
 [dependencies]
+anyhow = "1.0.70"
+ethers = { version = "2.0", features = ["legacy"] }
+reqwest = "0.11.22"
+serde = "1.0.193"
+serde_json = "1.0.108"
+tokio = { version = "1.28.0", features = ["full"] }
