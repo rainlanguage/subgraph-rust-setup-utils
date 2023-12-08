@@ -112,6 +112,26 @@ impl RPC {
         Ok(block)
     }
 
+    /// Try to kump forward in time by the given amount of time in seconds and mine the block to reflect the change
+    pub async fn increase_block_time<T>(&self, time_to_increase: T) -> anyhow::Result<()>
+    where
+        T: Into<u64> + Copy,
+    {
+        let u64_value: u64 = time_to_increase.into();
+
+        let json_rpc_request = serde_json::json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "evm_increaseTime",
+            "params": [u64_value],
+        });
+
+        self.send_request(json_rpc_request).await?;
+
+        // Mine a new block that have the new timestamp
+        self.mine_block().await
+    }
+
     async fn send_request(
         &self,
         json_data_request: serde_json::Value,
