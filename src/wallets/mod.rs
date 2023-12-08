@@ -15,12 +15,46 @@ pub enum WalletInput {
     Wallet(Wallet<SigningKey>),
 }
 
+impl From<&WalletInput> for WalletInput {
+    fn from(input_ref: &WalletInput) -> Self {
+        input_ref.to_owned()
+    }
+}
+impl From<Option<WalletInput>> for WalletInput {
+    fn from(input_option: Option<WalletInput>) -> Self {
+        match input_option {
+            Some(input) => input,
+            None => WalletInput::default(),
+        }
+    }
+}
+
+impl From<&u32> for WalletInput {
+    fn from(num: &u32) -> Self {
+        WalletInput::Index(num.to_owned())
+    }
+}
+
 impl From<u32> for WalletInput {
     fn from(num: u32) -> Self {
         WalletInput::Index(num)
     }
 }
 
+impl From<&Wallet<SigningKey>> for WalletInput {
+    fn from(wallet: &Wallet<SigningKey>) -> Self {
+        WalletInput::Wallet(wallet.to_owned())
+    }
+}
+
+impl From<Option<Wallet<SigningKey>>> for WalletInput {
+    fn from(wallet_option: Option<Wallet<SigningKey>>) -> Self {
+        match wallet_option {
+            Some(wallet) => WalletInput::Wallet(wallet),
+            None => WalletInput::default(),
+        }
+    }
+}
 impl From<Wallet<SigningKey>> for WalletInput {
     fn from(wallet: Wallet<SigningKey>) -> Self {
         WalletInput::Wallet(wallet)
