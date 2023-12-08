@@ -6,7 +6,7 @@ pub struct RPC {
 
 impl Default for RPC {
     fn default() -> Self {
-        let default_url = "http://localhost:8545";
+        let default_url = "http://localhost:8545/";
 
         RPC {
             url: String::from(default_url),
