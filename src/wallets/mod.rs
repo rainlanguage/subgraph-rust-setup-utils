@@ -46,6 +46,19 @@ impl Default for WalletHandler {
 }
 
 impl WalletHandler {
+    /// Create a WalletHandler from a mnemonic and an optional provider
+    pub fn new(mnemonic: &str, provider: Option<Provider<Http>>) -> Self {
+        let provider_field = match provider {
+            Some(provider) => provider,
+            None => RPC::default().get_provider().to_owned(),
+        };
+
+        WalletHandler {
+            wallet_builder: MnemonicBuilder::<English>::default().phrase(mnemonic),
+            provider: provider_field,
+        }
+    }
+
     /// Get a wallet from the given index
     pub fn get_wallet(&self, index: u32) -> anyhow::Result<Wallet<SigningKey>, WalletError> {
         self.wallet_builder.clone().index(index)?.build()
